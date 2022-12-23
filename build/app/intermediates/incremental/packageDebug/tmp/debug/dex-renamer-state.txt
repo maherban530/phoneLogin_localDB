@@ -1,0 +1,4 @@
+#Fri Dec 23 18:52:45 IST 2022
+base.0=/Users/nikhilsingh/Documents/Flutter Projects/testBakers/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
