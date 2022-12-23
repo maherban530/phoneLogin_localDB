@@ -125,22 +125,27 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
                 onTap: () async {
-                  if (_formKey.currentState.validate()) {
-                    _insert(
-                        firstNameController.text, phoneNumberController.text);
+                  if (phoneNumberController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                        content: new Text('Please Enter Phone Number')));
+                  } else {
+                    if (_formKey.currentState.validate()) {
+                      _insert(
+                          firstNameController.text, phoneNumberController.text);
 
-                    var sessions = FlutterSession();
-                    await sessions.set(
-                      "sessiondata",
-                      Random().nextInt(100000).toString(),
-                    );
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    print("session ${prefs.getString('sessiondata')}");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Home()),
-                    );
+                      var sessions = FlutterSession();
+                      await sessions.set(
+                        "sessiondata",
+                        Random().nextInt(100000).toString(),
+                      );
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      print("session ${prefs.getString('sessiondata')}");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Home()),
+                      );
+                    }
                   }
                 },
               ),
