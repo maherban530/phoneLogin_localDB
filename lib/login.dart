@@ -116,17 +116,12 @@ class _LoginState extends State<Login> {
                   var contain = users.where((element) =>
                       element.phoneNumber == phoneNumberController.text);
                   if (contain.isNotEmpty) {
-                    // var sessions = FlutterSession();
                     final SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     await prefs.setBool(
                       "sessiondata",
                       true,
                     );
-                    // await sessions.set(
-                    //   "sessiondata",
-                    //   Random().nextInt(100000).toString(),
-                    // );
 
                     Navigator.push(
                       context,
@@ -141,17 +136,10 @@ class _LoginState extends State<Login> {
                 }
               },
             ),
-            // ),
-            // Expanded(
-            //   flex: 1,
-            //   child:
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Text(
-                //   "Don't have an account?",
-                //   style: TextStyle(fontSize: (15)),
-                // ),
                 SizedBox(
                     width: 66, child: Divider(color: Colors.grey.shade700)),
                 Text(
@@ -164,10 +152,7 @@ class _LoginState extends State<Login> {
                 SizedBox(width: 66, child: Divider(color: Colors.grey)),
               ],
             ),
-            // ),
-            // Expanded(
-            //   flex: 2,
-            //   child:
+
             Center(
               child: InkWell(
                 child: Container(
@@ -210,7 +195,6 @@ class _LoginState extends State<Login> {
         filled: true,
         fillColor: Colors.grey.shade200,
         border: OutlineInputBorder(
-          // borderSide: BorderSide.none,
           borderRadius: new BorderRadius.circular(6.0),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
@@ -225,7 +209,6 @@ class _LoginState extends State<Login> {
       ),
       initialCountryCode: 'UG',
       dropdownIconPosition: IconPosition.trailing,
-      // dropdownIcon: Icon(Icons.),
       disableLengthCheck: true,
       flagsButtonMargin: EdgeInsets.only(left: 10),
       validator: (value) {
@@ -234,7 +217,6 @@ class _LoginState extends State<Login> {
         }
         return null;
       },
-      // controller: phoneNumberController,
       onChanged: (phone) {
         phoneNumberController.text = phone.completeNumber;
         print(phone.completeNumber);

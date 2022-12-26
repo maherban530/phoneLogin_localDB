@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 class DashboardCardWidget extends StatelessWidget {
   const DashboardCardWidget({
     Key? key,
-    // this.choice
   }) : super(key: key);
-  // final Choice choice;
 
   @override
   Widget build(BuildContext context) {

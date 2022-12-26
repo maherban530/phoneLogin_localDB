@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_bakers/Widgets/manage_product.dart';
@@ -10,7 +7,6 @@ import 'Providers/product_provider.dart';
 import 'Widgets/hot_product_widget.dart';
 import 'Widgets/recent_order_widget.dart';
 import 'Widgets/total_widget.dart';
-import 'details.dart';
 import 'login.dart';
 
 class Home extends StatefulWidget {
@@ -19,28 +15,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // String apiData;
-  // var apiDatalength;
-  // void apiDataGet() async {
-  //   http.Response response =
-  //       await http.get("https://api.androidhive.info/contacts/");
-
-  //   if (response.statusCode == 200) {
-  //     apiData = response.body;
-  //     setState(() {
-  //       apiDatalength = jsonDecode(apiData)['contacts'];
-  //     });
-  //   } else {
-  //     print(response.statusCode);
-  //   }
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // apiDataGet();
-  // }
-
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -50,9 +24,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // if (apiDatalength == null) {
-    //   return Center(child: CircularProgressIndicator());
-    // }
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       appBar: AppBar(
@@ -200,38 +171,6 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
-      // ListView.builder(
-      //     shrinkWrap: true,
-      //     itemCount: apiDatalength.length,
-      //     itemBuilder: (context, index) {
-      //       return GestureDetector(
-      //         onTap: () {
-      //           Navigator.push(
-      //             context,
-      //             MaterialPageRoute(builder: (context) => Details()),
-      //           );
-      //         },
-      //         child: Card(
-      //           margin: const EdgeInsets.all(10.0),
-      //           child: Padding(
-      //             padding: const EdgeInsets.all(10.0),
-      //             child: Column(
-      //               crossAxisAlignment: CrossAxisAlignment.start,
-      //               children: [
-      //                 Text(apiDatalength[index]['id']),
-      //                 Text(apiDatalength[index]['name']),
-      //                 Text(apiDatalength[index]['email']),
-      //                 Text(apiDatalength[index]['address']),
-      //                 Text(apiDatalength[index]['gender']),
-      //                 Text(apiDatalength[index]['phone']['mobile']),
-      //                 Text(apiDatalength[index]['phone']['home']),
-      //                 Text(apiDatalength[index]['phone']['office']),
-      //               ],
-      //             ),
-      //           ),
-      //         ),
-      //       );
-      //     }),
     );
   }
 }

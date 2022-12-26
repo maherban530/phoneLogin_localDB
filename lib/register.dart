@@ -1,8 +1,4 @@
-import 'dart:math';
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-// import 'package:flutter_session/flutter_session.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_bakers/Models/user_model.dart';
@@ -175,7 +171,6 @@ class _RegisterState extends State<Register> {
 
   TextFormField buildLastNameField() {
     return TextFormField(
-      // obscureText: !_passwordVisible,
       controller: lastNameController,
       keyboardType: TextInputType.text,
       validator: (value) {
@@ -191,7 +186,6 @@ class _RegisterState extends State<Register> {
         filled: true,
         fillColor: Colors.grey.shade200,
         border: OutlineInputBorder(
-          // borderSide: BorderSide.none,
           borderRadius: new BorderRadius.circular(6.0),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
@@ -215,7 +209,6 @@ class _RegisterState extends State<Register> {
         filled: true,
         fillColor: Colors.grey.shade200,
         border: OutlineInputBorder(
-          // borderSide: BorderSide.none,
           borderRadius: new BorderRadius.circular(6.0),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
@@ -230,7 +223,6 @@ class _RegisterState extends State<Register> {
       ),
       initialCountryCode: 'UG',
       dropdownIconPosition: IconPosition.trailing,
-      // dropdownIcon: Icon(Icons.),
       disableLengthCheck: true,
       flagsButtonMargin: EdgeInsets.only(left: 10),
       validator: (value) {
@@ -239,7 +231,6 @@ class _RegisterState extends State<Register> {
         }
         return null;
       },
-      // controller: phoneNumberController,
       onChanged: (phone) {
         phoneNumberController.text = phone.completeNumber;
         print(phone.completeNumber);
@@ -248,7 +239,6 @@ class _RegisterState extends State<Register> {
   }
 
   void _insert(name, lastname, String number) async {
-    // row to insert
     Map<String, dynamic> row = {
       DatabaseHelper.columnName: name,
       DatabaseHelper.columnLastName: lastname,
@@ -259,7 +249,6 @@ class _RegisterState extends State<Register> {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // var sessions = FlutterSession();
     await prefs.setBool(
       "sessiondata",
       true,
