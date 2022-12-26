@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
+// import 'package:flutter_session/flutter_session.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_bakers/Models/user_model.dart';
 import 'package:test_bakers/register.dart';
@@ -18,18 +19,10 @@ class _LoginState extends State<Login> {
   final dbHelper = DatabaseHelper.instance;
   List<Users> users = [];
 
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController passwordController = new TextEditingController();
-  bool _passwordVisible = false;
-  final _formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
-      new GlobalKey<ScaffoldMessengerState>();
+  final TextEditingController phoneNumberController =
+      new TextEditingController();
 
-  void _showMessageInScaffold(String message) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(message),
-    ));
-  }
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -41,142 +34,211 @@ class _LoginState extends State<Login> {
     final allRows = await dbHelper.queryAllRows();
     users.clear();
     allRows.forEach((row) => users.add(Users.fromMap(row)));
-    _showMessageInScaffold('Query done.');
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      body: Column(
-        children: [
-          Expanded(
-            flex: 4,
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Login to your account"),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: buildEmailFormField(),
+      // key: _scaffoldKey,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Expanded(
+            //   // flex: 3,
+            //   child:
+            SizedBox(height: 50),
+            Container(
+                height: 40,
+                width: 40,
+                margin: EdgeInsets.all(30),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
                   ),
-                  SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: buildPasswordFormField(),
-                  ),
-                  SizedBox(height: 30),
-                  ElevatedButton(
-                    child: Text("Sign In"),
-                    onPressed: () async {
-                      if (_formKey.currentState.validate()) {
-                        var sessions = FlutterSession();
-                        await sessions.set(
-                          "sessiondata",
-                          Random().nextInt(100000).toString(),
-                        );
-                        final SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        print("session ${prefs.getString('sessiondata')}");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Home()),
-                        );
-                      }
-                    },
-                  ),
-                ],
+                ),
+                child: Icon(Icons.arrow_back_ios_new)),
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: Text(
+                "Get Started",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Don't have an account?",
-                  style: TextStyle(fontSize: (15)),
-                ),
-                TextButton(
-                  child: Text(
-                    "RegisterNow",
-                    style: TextStyle(
-                      color: Colors.indigo,
-                      fontSize: (15),
-                    ),
+            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: Text(
+                "Please enter your mobile number to login or\ncreate an account",
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+            SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: buildPhoneNumberField(),
+            ),
+            SizedBox(height: 14),
+            InkWell(
+              child: Container(
+                height: 40,
+                width: double.infinity,
+                margin: EdgeInsets.all(30),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
                   ),
-                  onPressed: () {
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.green.withOpacity(0.4),
+                      spreadRadius: 1,
+                      blurRadius: 9,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Text(
+                  "Continue",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500, color: Colors.white),
+                ),
+              ),
+              onTap: () async {
+                if (phoneNumberController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                      content: new Text('Please Enter Phone Number')));
+                } else {
+                  var contain = users.where((element) =>
+                      element.phoneNumber == phoneNumberController.text);
+                  if (contain.isNotEmpty) {
+                    // var sessions = FlutterSession();
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setBool(
+                      "sessiondata",
+                      true,
+                    );
+                    // await sessions.set(
+                    //   "sessiondata",
+                    //   Random().nextInt(100000).toString(),
+                    // );
+
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Register()),
+                      MaterialPageRoute(builder: (context) => Home()),
                     );
-                  },
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        new SnackBar(content: new Text("Login Successfull")));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
+                        content: new Text("Don't Register PhoneNumber")));
+                  }
+                }
+              },
+            ),
+            // ),
+            // Expanded(
+            //   flex: 1,
+            //   child:
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Text(
+                //   "Don't have an account?",
+                //   style: TextStyle(fontSize: (15)),
+                // ),
+                SizedBox(
+                    width: 66, child: Divider(color: Colors.grey.shade700)),
+                Text(
+                  "OR",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: (15),
+                  ),
                 ),
+                SizedBox(width: 66, child: Divider(color: Colors.grey)),
               ],
             ),
-          ),
-        ],
+            // ),
+            // Expanded(
+            //   flex: 2,
+            //   child:
+            Center(
+              child: InkWell(
+                child: Container(
+                  height: 40,
+                  width: double.infinity,
+                  margin: EdgeInsets.all(30),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.green),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    "Sign up",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500, color: Colors.green),
+                  ),
+                ),
+                onTap: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Register()),
+                  );
+                },
+              ),
+            ),
+            // ),
+          ],
+        ),
       ),
     );
   }
 
-  TextFormField buildEmailFormField() {
-    return TextFormField(
-      controller: emailController,
-      keyboardType: TextInputType.emailAddress,
+  IntlPhoneField buildPhoneNumberField() {
+    return IntlPhoneField(
+      decoration: InputDecoration(
+        hintText: "Phone Number",
+        hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: (14)),
+        filled: true,
+        fillColor: Colors.grey.shade200,
+        border: OutlineInputBorder(
+          // borderSide: BorderSide.none,
+          borderRadius: new BorderRadius.circular(6.0),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: new OutlineInputBorder(
+          borderRadius: new BorderRadius.circular(6.0),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        enabledBorder: new OutlineInputBorder(
+          borderRadius: new BorderRadius.circular(6.0),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+      ),
+      initialCountryCode: 'UG',
+      dropdownIconPosition: IconPosition.trailing,
+      // dropdownIcon: Icon(Icons.),
+      disableLengthCheck: true,
+      flagsButtonMargin: EdgeInsets.only(left: 10),
       validator: (value) {
-        if (value.isEmpty) {
-          return 'Please enter a Email address';
-        }
-        if (!value.contains('@')) {
-          return 'Email is invalid, must contain @';
-        }
-        if (!value.contains('.')) {
-          return 'Email is invalid, must contain .';
+        if (value!.number.isEmpty) {
+          return 'Please enter a Phone Number';
         }
         return null;
       },
-      decoration: InputDecoration(
-        hintText: "E-mail",
-        hintStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: (15)),
-      ),
-    );
-  }
-
-  TextFormField buildPasswordFormField() {
-    return TextFormField(
-      obscureText: !_passwordVisible,
-      controller: passwordController,
-      keyboardType: TextInputType.visiblePassword,
-      validator: (value) {
-        if (value.isEmpty) {
-          return 'Please enter a Password';
-        }
-
-        return null;
+      // controller: phoneNumberController,
+      onChanged: (phone) {
+        phoneNumberController.text = phone.completeNumber;
+        print(phone.completeNumber);
       },
-      decoration: InputDecoration(
-        hintText: "Password",
-        hintStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: (15),
-        ),
-        suffixIcon: IconButton(
-          icon: Icon(
-            _passwordVisible ? Icons.visibility : Icons.visibility_off,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            setState(() {
-              _passwordVisible = !_passwordVisible;
-            });
-          },
-        ),
-      ),
     );
   }
 }

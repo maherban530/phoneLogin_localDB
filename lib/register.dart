@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_session/flutter_session.dart';
+// import 'package:flutter_session/flutter_session.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_bakers/Models/user_model.dart';
@@ -42,26 +42,23 @@ class _RegisterState extends State<Register> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 20),
-                      Container(
-                          height: 40,
-                          width: 40,
-                          margin: EdgeInsets.all(30),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                            height: 40,
+                            width: 40,
+                            margin: EdgeInsets.all(30),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
                             ),
-                            // boxShadow: [
-                            //   BoxShadow(
-                            //     color: Colors.green.withOpacity(0.4),
-                            //     spreadRadius: 1,
-                            //     blurRadius: 9,
-                            //     offset: Offset(0, 3), // changes position of shadow
-                            //   ),
-                            // ],
-                          ),
-                          child: Icon(Icons.arrow_back_ios_new)),
+                            child: Icon(Icons.arrow_back_ios_new)),
+                      ),
                       SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.only(left: 20.0),
@@ -83,16 +80,16 @@ class _RegisterState extends State<Register> {
                       Row(
                         children: [
                           SizedBox(width: 20),
-                          Expanded(child: buildEmailFormField()),
+                          Expanded(child: buildFirstNameField()),
                           SizedBox(width: 16),
-                          Expanded(child: buildPasswordFormField()),
+                          Expanded(child: buildLastNameField()),
                           SizedBox(width: 20),
                         ],
                       ),
                       SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: buildConformPassFormField(),
+                        child: buildPhoneNumberField(),
                       ),
                     ],
                   ),
@@ -129,22 +126,9 @@ class _RegisterState extends State<Register> {
                     ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
                         content: new Text('Please Enter Phone Number')));
                   } else {
-                    if (_formKey.currentState.validate()) {
-                      _insert(
-                          firstNameController.text, phoneNumberController.text);
-
-                      var sessions = FlutterSession();
-                      await sessions.set(
-                        "sessiondata",
-                        Random().nextInt(100000).toString(),
-                      );
-                      final SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      print("session ${prefs.getString('sessiondata')}");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Home()),
-                      );
+                    if (_formKey.currentState!.validate()) {
+                      _insert(firstNameController.text, lastNameController.text,
+                          phoneNumberController.text.toString());
                     }
                   }
                 },
@@ -156,12 +140,12 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  TextFormField buildEmailFormField() {
+  TextFormField buildFirstNameField() {
     return TextFormField(
       controller: firstNameController,
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter a First Name';
         }
 
@@ -189,13 +173,13 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  TextFormField buildPasswordFormField() {
+  TextFormField buildLastNameField() {
     return TextFormField(
       // obscureText: !_passwordVisible,
       controller: lastNameController,
       keyboardType: TextInputType.text,
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter a Last Name';
         }
 
@@ -223,7 +207,7 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  IntlPhoneField buildConformPassFormField() {
+  IntlPhoneField buildPhoneNumberField() {
     return IntlPhoneField(
       decoration: InputDecoration(
         hintText: "Phone Number",
@@ -250,7 +234,7 @@ class _RegisterState extends State<Register> {
       disableLengthCheck: true,
       flagsButtonMargin: EdgeInsets.only(left: 10),
       validator: (value) {
-        if (value.number.isEmpty) {
+        if (value!.number.isEmpty) {
           return 'Please enter a Phone Number';
         }
         return null;
@@ -263,14 +247,28 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  void _insert(name, miles) async {
+  void _insert(name, lastname, String number) async {
     // row to insert
     Map<String, dynamic> row = {
       DatabaseHelper.columnName: name,
-      DatabaseHelper.columnphoneNumber: miles
+      DatabaseHelper.columnLastName: lastname,
+      DatabaseHelper.columnphoneNumber: number
     };
-    Users car = Users.fromMap(row);
-    final id = await dbHelper.insert(car);
+    Users users = Users.fromMap(row);
+    final id = await dbHelper.insert(users);
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // var sessions = FlutterSession();
+    await prefs.setBool(
+      "sessiondata",
+      true,
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Home()),
+    );
     ScaffoldMessenger.of(context)
         .showSnackBar(new SnackBar(content: new Text('inserted row id: $id')));
   }
